@@ -1,4 +1,4 @@
-import { addDoc, collection, deleteDoc, doc, getDocs, query, serverTimestamp, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from "firebase/firestore";
 import { db } from "../firebase";
 import { useAuth } from "./use-auth";
 import { useCallback } from "react";
@@ -12,7 +12,18 @@ export function useSuppliers() {
   const getSuppliers = useCallback(async () => {
     const q = query(refCollection, where("userId", "==", userId));
     const snapshot = await getDocs(q);
-    const suppliers = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    const suppliers = [];
+
+    for (const doc of snapshot.docs) {
+      const supplierData = doc.data();
+      const supplierId = doc.id;
+
+      const contactsRef = collection(doc.ref, "contacts");
+      const contactsSnapshot = await getDocs(contactsRef);
+      const contacts = contactsSnapshot.docs.map((contactDoc) => ({ id: contactDoc.id, ...contactDoc.data() }));
+
+      suppliers.push({ id: supplierId, ...supplierData, contacts });
+    }
 
     return suppliers;
   }, [userId]);
@@ -27,11 +38,11 @@ export function useSuppliers() {
 
   const deleteSupplier = useCallback(async (id) => {
     return deleteDoc(doc(refCollection, id));
-  });
+  }, []);
 
   const updateSupplier = useCallback(async (id, supplier) => {
     return updateDoc(doc(refCollection, id), supplier);
-  });
+  }, []);
 
   return {
     getSuppliers,

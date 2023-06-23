@@ -1,10 +1,15 @@
 import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Typography } from "@mui/material";
 
-import PersonIcon from "@mui/icons-material/Person";
 import { useAuth } from "../../hooks";
-import { Link as RouterLink, useLocation } from "react-router-dom";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { useMemo } from "react";
-import { HandshakeTwoTone, PermContactCalendarTwoTone, LogoutTwoTone, AddIcCallTwoTone } from "@mui/icons-material";
+import {
+  HandshakeTwoTone,
+  PermContactCalendarTwoTone,
+  LogoutTwoTone,
+  ShoppingCartTwoTone,
+  AddShoppingCartTwoTone,
+} from "@mui/icons-material";
 
 const drawerWidth = 280;
 
@@ -17,6 +22,7 @@ export function AppSidebar() {
   const { pathname } = useLocation();
   const { signOut, authenticatedUser } = useAuth();
   const role = authenticatedUser?.profile?.role ?? "admin";
+  const navigate = useNavigate();
 
   const links = useMemo(() => {
     const roleLinkMap = {
@@ -24,7 +30,14 @@ export function AppSidebar() {
         { icon: <HandshakeTwoTone />, label: "Fornecedores", path: "/" },
         { icon: <PermContactCalendarTwoTone />, label: "Contatos", path: "/contacts" },
       ],
-      manager: [{ icon: <PersonIcon />, label: "Cotações", path: "/quotes" }],
+      manager: [
+        { icon: <ShoppingCartTwoTone />, label: "Cotações", path: "/quotes" },
+        {
+          icon: <AddShoppingCartTwoTone />,
+          label: "Nova Cotação",
+          path: "/new-quote",
+        },
+      ],
     };
 
     return roleLinkMap[role] ?? [];
@@ -32,6 +45,7 @@ export function AppSidebar() {
 
   const handleLogout = () => {
     signOut();
+    navigate("/");
   };
 
   return (

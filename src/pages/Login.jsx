@@ -17,8 +17,10 @@ export function Login() {
   };
 
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="sm" sx={{ alignItems: "center", justifyContent: "center", height: "100%", display: "flex" }}>
       <Stack direction="column" flex="1" spacing={2}>
+        <img src="/logo.png" alt="Logo" width={180} />
+
         <Typography variant="h2">Entrar na sua conta</Typography>
 
         <Typography variant="subtitle1">Informe suas credenciais para continuar</Typography>
